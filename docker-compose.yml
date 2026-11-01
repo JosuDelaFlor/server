@@ -11,15 +11,24 @@ services:
     volumes:
       - ./mc-data:/data
     restart: unless-stopped
-    
+
   ngrok:
     image: ngrok/ngrok:latest
     container_name: mc-ngrok
     environment:
-      NGROK_AUTHTOKEN: "${NGROK_AUTHTOKEN}"
-    command: "tcp minecraft:25565 --log=stdout"
-    ports:
-      - "4040:4040"
+      NGROK_AUTHTOKEN: ${NGROK_AUTHTOKEN}
+    command: "tcp minecraft:25565 --log=stdout --api-addr=0.0.0.0:4040"
     depends_on:
       - minecraft
+    restart: unless-stopped
+
+  notifier:
+    build: ./notifier
+    container_name: mc-notifier
+    environment:
+      NGROK_API_URL: "http://ngrok:4040/api/tunnels"
+      DISCORD_WEBHOOK_URL: ${DISCORD_WEBHOOK_URL}
+      CHECK_INTERVAL: "10"
+    depends_on:
+      - ngrok
     restart: unless-stopped

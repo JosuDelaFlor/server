@@ -1,2 +1,4 @@
 .env
 mc-data/
+notifier/.env/
+.vscode/
