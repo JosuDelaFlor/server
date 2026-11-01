@@ -6,6 +6,7 @@ services:
       EULA: "TRUE"
       MEMORY: "4G"
       TYPE: "PAPER"
+      VERSION: "1.20.1"
     expose:
       - "25565"
     volumes:
