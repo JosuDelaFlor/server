@@ -11,13 +11,15 @@ services:
     volumes:
       - ./mc-data:/data
     restart: unless-stopped
-
+    
   ngrok:
     image: ngrok/ngrok:latest
     container_name: mc-ngrok
     environment:
       NGROK_AUTHTOKEN: "${NGROK_AUTHTOKEN}"
-    command: "tcp minecraft:25565"
+    command: "tcp minecraft:25565 --log=stdout"
+    ports:
+      - "4040:4040"
     depends_on:
       - minecraft
     restart: unless-stopped
