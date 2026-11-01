@@ -1,0 +1,23 @@
+services:
+  minecraft:
+    image: itzg/minecraft-server
+    container_name: mc-server
+    environment:
+      EULA: "TRUE"
+      MEMORY: "4G"
+      TYPE: "PAPER"
+    ports:
+      - "25565:25565"
+    volumes:
+      - ./mc-data:/data
+    restart: unless-stopped
+
+  ngrok:
+    image: ngrok/ngrok:latest
+    container_name: mc-ngrok
+    environment:
+      NGROK_AUTHTOKEN: "${NGROK_AUTHTOKEN}"
+    command: "tcp minecraft:25565"
+    depends_on:
+      - minecraft
+    restart: unless-stopped
