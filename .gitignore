@@ -1,5 +1,7 @@
 .env
 mc-data/
 notifier/.env/
+backups/.env/
+mc-backups/
 *.pyc
 .vscode/

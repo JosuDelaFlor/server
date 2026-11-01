@@ -6,8 +6,8 @@ services:
       EULA: "TRUE"
       MEMORY: "4G"
       TYPE: "PAPER"
-    ports:
-      - "25565:25565"
+    expose:
+      - "25565"
     volumes:
       - ./mc-data:/data
     restart: unless-stopped
@@ -21,6 +21,16 @@ services:
     depends_on:
       - minecraft
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:4040/api/tunnels"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   notifier:
     build: ./notifier
@@ -31,4 +41,15 @@ services:
       CHECK_INTERVAL: "10"
     depends_on:
       - ngrok
+    restart: unless-stopped
+
+  backups:
+    image: itzg/mc-backup
+    container_name: mc-backups
+    environment:
+      BACKUP_INTERVAL: "24h"
+      PRUNE_BACKUPS_DAYS: "7"
+    volumes:
+      - ./mc-data:/data:ro        # Montaje de solo lectura al servidor
+      - ./mc-backups:/backups     # Volumen para los archivos comprimidos
     restart: unless-stopped
