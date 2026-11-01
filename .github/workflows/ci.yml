@@ -23,4 +23,4 @@ jobs:
       env:
         PYTHONPATH: ./notifier
       run: |
-        pytest notifier/tests/ -v
+        pytest notifier/src/infrastructure/notifiers/tests/ -v

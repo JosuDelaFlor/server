@@ -1,4 +1,5 @@
 .env
 mc-data/
 notifier/.env/
+*.pyc
 .vscode/
