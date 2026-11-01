@@ -17,7 +17,9 @@ services:
     container_name: mc-ngrok
     environment:
       NGROK_AUTHTOKEN: ${NGROK_AUTHTOKEN}
-    command: "tcp minecraft:25565 --log=stdout --api-addr=0.0.0.0:4040"
+    command: "tcp minecraft:25565 --config=/etc/ngrok.yml --log=stdout"
+    volumes:
+      - ./ngrok.yml:/etc/ngrok.yml:ro
     depends_on:
       - minecraft
     restart: unless-stopped
