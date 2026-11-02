@@ -63,6 +63,8 @@ services:
   dashboard-api:
     build: ./dashboard-api
     container_name: mc-dashboard-api
+    ports:
+      - "127.0.0.1:8000:8000"
     environment:
       - RCON_HOST=minecraft
       - RCON_PORT=25575
