@@ -1,9 +1,10 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 
-# --- Importamos nuestros routers modulares ---
 from src.api.monitor_route import router as monitor_router
 from src.api.management_route import router as management_router
+from src.domain.exceptions import DomainError
 
 def create_app() -> FastAPI:
     app = FastAPI(title="Minecraft Dashboard API", version="1.0.0")
@@ -20,6 +21,14 @@ def create_app() -> FastAPI:
     app.include_router(monitor_router, prefix="/api/v1")
     app.include_router(management_router, prefix="/api/v1")
 
+    @app.exception_handler(DomainError)
+    async def domain_error_handler(request: Request, exc: DomainError):
+        """Atrapa cualquier error de negocio y lo devuelve como HTTP 400"""
+        return JSONResponse(
+            status_code=400,
+            content={"success": False, "detail": str(exc)}
+        )
+    
     @app.get("/health", tags=["Health"])
     def health_check():
         return {"status": "healthy"}

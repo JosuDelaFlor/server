@@ -4,6 +4,7 @@ from typing import List
 
 from src.core.interfaces import IDockerClient, IRconClient
 from src.domain.models import ServerStatus, Player
+from src.domain.exceptions import DomainError
 
 class ServerMonitorService:
     """Orquesta la infraestructura para cumplir con los casos de uso del Dashboard"""
@@ -27,8 +28,12 @@ class ServerMonitorService:
 
         # 2. Si el contenedor está corriendo, consultamos al juego (RCON)
         if is_online:
-            rcon_response = self.rcon.execute_command("list")
-            players_online, max_players, players_list = self._parse_player_list(rcon_response)
+            try:
+                rcon_response = self.rcon.execute_command("list")
+                players_online, max_players, players_list = self._parse_player_list(rcon_response)
+            except DomainError:
+                # Si falla RCON (ej. servidor arrancando), asumimos 0 jugadores temporalmente
+                pass
 
         # 3. Empaquetar y devolver el modelo de Dominio
         return ServerStatus(
@@ -44,7 +49,7 @@ class ServerMonitorService:
         Parsea la respuesta del comando 'list' de Minecraft.
         Ejemplo de respuesta esperada: "There are 2 of a max of 20 players online: Josu, Notch"
         """
-        if "Error" in rcon_response or not rcon_response:
+        if not rcon_response:
             return 0, 0, []
 
         try:
