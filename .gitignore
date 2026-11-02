@@ -1,7 +1,15 @@
 .env
+.env.*
+
 mc-data/
-notifier/.env/
-backups/.env/
 mc-backups/
-*.pyc
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# IDEs
 .vscode/
+.idea/
