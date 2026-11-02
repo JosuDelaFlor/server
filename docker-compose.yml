@@ -69,6 +69,7 @@ services:
       - RCON_PASSWORD=${RCON_PASSWORD:-supersecreto}
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./mc-data:/server-data
     depends_on:
       - minecraft
     restart: unless-stopped
