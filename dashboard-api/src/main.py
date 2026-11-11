@@ -5,6 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from src.api.monitor_route import router as monitor_router
 from src.api.management_route import router as management_router
 from src.domain.exceptions import DomainError
+from src.api.websocket import router as websocket_router
 
 from src.domain.exceptions import DomainError
 from src.core.logger import get_logger
@@ -65,6 +66,20 @@ def create_app() -> FastAPI:
         prefix="/api/v1",
         dependencies=[Depends(verify_api_key)]
     )
+    # Rutas HTTP (protegidas por Header)
+    app.include_router(
+        monitor_router, 
+        prefix="/api/v1",
+        dependencies=[Depends(verify_api_key)]
+    )
+    app.include_router(
+        management_router, 
+        prefix="/api/v1",
+        dependencies=[Depends(verify_api_key)]
+    )
+    
+    # Ruta WebSocket (protegida internamente por Query)
+    app.include_router(websocket_router, prefix="/api/v1")
     
     @app.get("/health", tags=["Health"])
     def health_check():
