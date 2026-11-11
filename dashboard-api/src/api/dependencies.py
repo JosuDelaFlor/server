@@ -24,5 +24,7 @@ def get_management_service(settings: Settings = Depends(get_settings)) -> Server
             port=settings.rcon_port,
             password=settings.rcon_password
         ),
-        config_repo=FileServerConfigRepositoryImpl(file_path=settings.server_properties_path)
+        config_repo=FileServerConfigRepositoryImpl(file_path=settings.server_properties_path),
+        docker_client=DockerClientImpl(),
+        container_name=settings.container_name
     )
