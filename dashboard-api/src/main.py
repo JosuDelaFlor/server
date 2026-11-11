@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, Depends
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -8,6 +8,8 @@ from src.domain.exceptions import DomainError
 
 from src.domain.exceptions import DomainError
 from src.core.logger import get_logger
+
+from src.api.dependencies import verify_api_key
 
 logger = get_logger("api_gateway")
 
@@ -52,6 +54,17 @@ def create_app() -> FastAPI:
             status_code=400,
             content={"success": False, "detail": str(exc)}
         )
+
+    app.include_router(
+        monitor_router, 
+        prefix="/api/v1",
+        dependencies=[Depends(verify_api_key)]
+    )
+    app.include_router(
+        management_router, 
+        prefix="/api/v1",
+        dependencies=[Depends(verify_api_key)]
+    )
     
     @app.get("/health", tags=["Health"])
     def health_check():

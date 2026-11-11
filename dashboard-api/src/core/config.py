@@ -23,6 +23,8 @@ class Settings(BaseSettings):
         description="Ruta montada del archivo server.properties"
     )
 
+    api_key: str = Field(..., description="API Key estática para proteger los endpoints")
+
     # Configuración de Pydantic para ignorar variables extra que Docker pueda inyectar
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 
